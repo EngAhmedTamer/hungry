@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/constants/app_colors.dart';
-import 'package:hungry/features/cart/widgets/card_item.dart';
+import 'package:hungry/features/cart/widgets/cart_item.dart';
 
 import '../../../shared/custom_button.dart';
 import '../../../shared/custom_text.dart';
@@ -14,24 +14,31 @@ class CartView extends StatefulWidget {
   State<CartView> createState() => _CartViewState();
 }
 
-class _CartViewState extends State<CartView> {
-  int number = 2;
+class _CartViewState extends State<CartView>
+{
+  int itemCount = 20;
+  late List <int> quantities ;
+  @override
+  void initState() {
+    quantities = List.generate(itemCount, (index) => 1);
+    super.initState();
+  }
 
-  void add() {
+  void add(index) {
     setState(() {
-      number++;
+      quantities[index]++;
     });
   }
 
-  void mince() {
+  void mince(index) {
     setState(() {
-      if (number > 1) number--;
+      if (quantities[index] > 1) quantities[index]--;
     });
   }
 
-  void remove() {
+  void remove(index) {
     setState(() {
-      number = 0;
+      quantities[index] = 0;
     });
   }
 
@@ -61,21 +68,26 @@ class _CartViewState extends State<CartView> {
                   child: ListView.builder(
 
                     padding: const EdgeInsets.only(bottom: 200),
-                    itemCount: 5,
+                    itemCount: itemCount,
                     itemBuilder: (context, index) {
                       return CardItem(
                         image: 'assets/test/test.png',
                         mainText: 'Cheeseburger',
                         descText: 'Wendy"s burger',
-                        quantity: '$number',
-                        onAdd: add,
-                        onMince: mince,
-                        onRemove: remove,
+                        quantity: '${quantities[index]}',
+                        onAdd: (){
+                          add(index);
+                        },
+                        onMince: (){
+                          mince(index);
+                        },
+                        onRemove: (){
+                          remove(index);
+                        },
                       );
                     },
                   ),
                 ),
-               // const SizedBox(height: 0),
               ],
             ),
           ),
