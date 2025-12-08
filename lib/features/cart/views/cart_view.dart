@@ -127,7 +127,10 @@ class _CartViewState extends State<CartView>
                           color: Colors.white,
                         ),
 
-                        child: CustomButton(text: 'Checkout',color: Colors.white,)),
+                        child: SizedBox(
+                            width: 130,
+                            height: 45,
+                            child: CustomButton(text: 'Checkout',color: Colors.white,))),
                   ],
                 ),
               ),
