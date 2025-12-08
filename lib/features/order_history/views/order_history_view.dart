@@ -19,7 +19,7 @@ class OrderHistoryView extends StatelessWidget {
                const Gap(30),
                Center(
                  child: Text(
-                   "Your Cart",
+                   "Your History Order",
                    style: TextStyle(
                      fontSize: 28,
                      fontWeight: FontWeight.bold,
@@ -32,13 +32,13 @@ class OrderHistoryView extends StatelessWidget {
                  child: ListView.builder(
 
                    padding: const EdgeInsets.only(bottom: 200),
-                   itemCount:3 ,
+                   itemCount:9 ,
                    itemBuilder: (context, index) {
                      return
                        Card(
                          color: Colors.white,
                          child:Padding(
-                           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                            child: Column(
                              children: [
                                Row(
@@ -62,7 +62,8 @@ class OrderHistoryView extends StatelessWidget {
                                    )
                                  ],
                                ),
-                               CustomButton(text: 'remove',width: double.infinity,)
+                               Gap(20),
+                               CustomButton(text: 'Order Again',width: double.infinity,color: Colors.grey,)
                              ],
                            ),
                          ),

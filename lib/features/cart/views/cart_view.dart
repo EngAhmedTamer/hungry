@@ -6,6 +6,7 @@ import 'package:hungry/features/cart/widgets/cart_item.dart';
 
 import '../../../shared/custom_button.dart';
 import '../../../shared/custom_text.dart';
+import '../../checkout/views/checkout_view.dart';
 
 class CartView extends StatefulWidget {
   const CartView({super.key});
@@ -130,7 +131,11 @@ class _CartViewState extends State<CartView>
                         child: SizedBox(
                             width: 130,
                             height: 45,
-                            child: CustomButton(text: 'Checkout',color: Colors.white,))),
+                            child: CustomButton(text: 'Checkout',color: Colors.white,onTap: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (c){
+                                return CheckoutView();
+                              }));
+                            },))),
                   ],
                 ),
               ),
