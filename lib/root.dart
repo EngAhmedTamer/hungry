@@ -48,7 +48,7 @@ class _RootState extends State<Root> {
             right: 0,
             bottom: 0,
             child: Container(
-              height: 80,
+              height: 90,
               decoration: BoxDecoration(
                 color: AppColors.primary,
                 borderRadius: BorderRadius.circular(35),

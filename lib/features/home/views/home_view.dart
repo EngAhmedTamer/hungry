@@ -83,7 +83,9 @@ class _HomeViewState extends State<HomeView> {
                       desc: 'Wendy"s burger',
                       rate: '4.5',
                     ),
+
                   );
+
                 }, childCount: 6),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -93,6 +95,9 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
             ),
+            SliverToBoxAdapter(
+              child: SizedBox(height: 100,)
+            )
           ],
         ),
       ),
