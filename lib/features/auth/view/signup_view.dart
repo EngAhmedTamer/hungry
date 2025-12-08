@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../shared/custom_text.dart';
 import '../../../shared/custom_textfield.dart';
 import '../widgets/custom_btn.dart';
 
@@ -29,7 +28,7 @@ class SignupView extends StatelessWidget {
               child: Column(
                 children: [
                   Gap(100),
-                  Center(child: SvgPicture.asset('assets/logo.svg')),
+                  Center(child: SvgPicture.asset('assets/logo/logo.svg')),
                   Gap(10),
                   Gap(60),
                   CustomTextfield(
