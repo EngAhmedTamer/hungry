@@ -69,10 +69,10 @@ class _CardItemState extends State<CardItem> {
                 onTap: widget.onRemove,
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(30),
                     color: AppColors.primary,
                   ),
-                  width: 130,
+                  width: 100,
                   height: 45,
                   child: Center(child: CustomText(text: 'remove',color: Colors.white,)),
                 ),

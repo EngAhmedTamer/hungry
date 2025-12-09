@@ -104,26 +104,43 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
               ),
             ),
             Gap(20),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
+          ],
+        ),
+
+      ),
+      bottomSheet: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.shade800,
+                blurRadius: 15,
+                offset: Offset(0, 0),
+              )
+            ]
+        ),
+        height: 120,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomText(text: 'Total Price', size: 20),
                       CustomText(text: '\$ 18.9', size: 30),
                     ]
-                  ),
-                  CustomButton(text: 'Add To Cart',),
-                ]
-              ),
-            ),
-          ],
+                ),
+                SizedBox(
+                    width: 130,
+                    height: 60,
+                    child: CustomButton(text: 'Add To Cart',)),
+              ]
+          ),
         ),
-
-      ),
+      )
     );
   }
 }

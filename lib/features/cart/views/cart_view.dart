@@ -17,7 +17,7 @@ class CartView extends StatefulWidget {
 
 class _CartViewState extends State<CartView>
 {
-  int itemCount = 20;
+  int itemCount = 3;
   late List <int> quantities ;
   @override
   void initState() {
@@ -71,20 +71,25 @@ class _CartViewState extends State<CartView>
                     padding: const EdgeInsets.only(bottom: 200),
                     itemCount: itemCount,
                     itemBuilder: (context, index) {
-                      return CardItem(
-                        image: 'assets/test/test.png',
-                        mainText: 'Cheeseburger',
-                        descText: 'Wendy"s burger',
-                        quantity: '${quantities[index]}',
-                        onAdd: (){
-                          add(index);
-                        },
-                        onMince: (){
-                          mince(index);
-                        },
-                        onRemove: (){
-                          remove(index);
-                        },
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 20
+                        ),
+                        child: CardItem(
+                          image: 'assets/test/test.png',
+                          mainText: 'Cheeseburger',
+                          descText: 'Wendy"s burger',
+                          quantity: '${quantities[index]}',
+                          onAdd: (){
+                            add(index);
+                          },
+                          onMince: (){
+                            mince(index);
+                          },
+                          onRemove: (){
+                            remove(index);
+                          },
+                        ),
                       );
                     },
                   ),
@@ -103,7 +108,8 @@ class _CartViewState extends State<CartView>
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+
+                    color: Colors.black,
                     blurRadius: 10,
                     offset: Offset(0, 5),
                   ),
