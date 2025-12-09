@@ -4,9 +4,11 @@ import '../../../core/constants/app_colors.dart';
 import '../../../shared/custom_text.dart';
 
 class CustomAuthBtn extends StatelessWidget {
-  const CustomAuthBtn({super.key, this.onTap, required this.text});
+  const CustomAuthBtn({super.key, this.onTap, required this.text, this.color, this.textColor});
   final Function () ? onTap;
   final String text;
+  final Color? color ;
+  final Color? textColor ;
 
   @override
   Widget build(BuildContext context) {
@@ -16,14 +18,15 @@ class CustomAuthBtn extends StatelessWidget {
         width: 200,
         height: 50,
         decoration: BoxDecoration(
-          color: Colors.white,
+          border: Border.all(color:Colors.white),
+          color: color?? Colors.white,
           borderRadius: BorderRadius.circular(40),
         ),
         child: Center(
           child: CustomText(
             text: text,
             weight: FontWeight.bold,
-            color: AppColors.primary,
+            color:textColor?? AppColors.primary,
           ),
         ),
       ),
