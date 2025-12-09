@@ -36,6 +36,7 @@ flutter:
     - assets/detail/
     - assets/sanDetails/
     - assets/sideDetails/
+    - assets/icons/
   # fonts:
   #   - family: Schyler
   #     fonts:
