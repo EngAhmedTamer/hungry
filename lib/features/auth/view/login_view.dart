@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/features/auth/view/signup_view.dart';
+import 'package:hungry/features/home/views/home_view.dart';
 import 'package:hungry/shared/custom_text.dart';
 import 'package:hungry/shared/custom_textfield.dart';
 
@@ -18,49 +20,140 @@ class _LoginViewState extends State<LoginView> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
-      child: Scaffold(
-        backgroundColor: AppColors.primary,
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Form(
-            key: formKey,
-            child: Column(
-              children: [
-                Gap(100),
-                Center(child: SvgPicture.asset('assets/logo/logo.svg')),
-                Gap(10),
-                CustomText(
-                  text: "Welcome Back , Discover The Fast food ",
-                  color: Colors.white,
-                  size: 13,
-                  weight: FontWeight.w500,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: true,
+      body: Center(
+        child: ScrollConfiguration(
+          behavior: NoScrollUp(),
+          child: SingleChildScrollView(
+            child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Gap(180),
+                    Center(
+                      child: SvgPicture.asset(
+                        'assets/logo/logo.svg',
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    CustomText(text: 'Welcome to Our Food App'),
+                    Gap(10),
+                    Gap(60),
+
+                    Container(
+                      width: double.infinity,
+                      height: 1000,
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(30),
+                          topLeft: Radius.circular(30),
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Gap(20),
+                          CustomTextfield(
+                            hint: 'Email Address',
+                            isPassword: false,
+                            controller: emailController,
+                          ),
+                          Gap(20),
+                          CustomTextfield(
+                            hint: 'Password',
+                            isPassword: true,
+                            controller: passwordController,
+                          ),
+                          Gap(30),
+                          CustomAuthBtn(
+                            text: 'Sign in',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (c) {
+                                    return HomeView();
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                          Gap(20),
+                          CustomAuthBtn(
+                            color: AppColors.primary,
+                            textColor: Colors.white,
+                            text: 'Go To Signup ? ',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (c) {
+                                    return SignupView();
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                          Gap(20),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (c) {
+                                    return HomeView();
+                                  },
+
+                                )
+                              );
+                            },
+                            child: CustomText(text: 'Continue as a guest',color: Colors.orange,weight: FontWeight.bold,),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                Gap(60),
-                CustomTextfield(
-                  hint: 'Email Address',
-                  isPassword: false,
-                  controller: emailController,
-                ),
-                Gap(20),
-                CustomTextfield(
-                  hint: 'Password',
-                  isPassword: true,
-                  controller: passwordController,
-                ),
-                Gap(30),
-                CustomAuthBtn(text: 'login',onTap: () {
-                  if (formKey.currentState!.validate())
-                    print('success login');
-                },)
-              ],
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+}
+
+class NoScrollUp extends ScrollBehavior {
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) {
+    return const NeverScrollableScrollPhysics().applyTo(
+      _AllowDownScrollPhysics(),
+    );
+  }
+}
+
+class _AllowDownScrollPhysics extends ScrollPhysics {
+  const _AllowDownScrollPhysics({ScrollPhysics? parent})
+    : super(parent: parent);
+
+  @override
+  _AllowDownScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    return _AllowDownScrollPhysics(parent: buildParent(ancestor));
+  }
+
+  @override
+  double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
+    if (offset < 0) return 0;
+    return offset;
   }
 }

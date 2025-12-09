@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
       ),
       debugShowCheckedModeBanner: false,
       title: 'Hungry App',
-      home:  SignupView(),
+      home:  SplashView(),
     );
   }
 }
