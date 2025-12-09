@@ -66,8 +66,8 @@ class _CustomTextfieldState extends State<CustomTextfield> {
           borderSide: BorderSide(color: Colors.white),
         ),
         hintText: widget.hint,
-        fillColor: Colors.transparent,
-        hintStyle: TextStyle(color: Colors.white),
+        fillColor: Colors.white,
+        hintStyle: TextStyle(color: AppColors.primary),
         filled: true,
       ),
     );
