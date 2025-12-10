@@ -5,8 +5,7 @@ import 'package:hungry/root.dart';
 import 'package:hungry/splash_screen.dart';
 
 import 'features/auth/view/signup_view.dart';
-
-void main ()async{
+void main ()async    {
   WidgetsFlutterBinding.ensureInitialized();
    await SystemChrome.setPreferredOrientations(
     [
