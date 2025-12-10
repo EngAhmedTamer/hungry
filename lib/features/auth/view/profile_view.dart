@@ -81,12 +81,12 @@ class _ProfileViewState extends State<ProfileView> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  tileColor: Colors.black,
-                  leading: Image.asset('assets/icons/visa.png',width: 50,),
-                  title: CustomText(text:' Debit Card',color: Colors.white,),
-                  subtitle:CustomText(text:' **** ***** 1974',color: Colors.white,) ,
+                  tileColor: Colors.white,
+                  leading: Image.asset('assets/icons/visablack.png',width: 50,),
+                  title: CustomText(text:' Debit Card',color: Colors.black,),
+                  subtitle:CustomText(text:' **** ***** 1974',color: Colors.black,) ,
           
-                  trailing: CustomText(text: 'Default',color: Colors.white,)
+                  trailing: CustomText(text: 'Default',color: Colors.black,)
               ),
             ],
           ),
