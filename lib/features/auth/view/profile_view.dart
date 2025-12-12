@@ -1,10 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/features/auth/data/auth_repo.dart';
+import 'package:hungry/features/auth/data/user_model.dart';
 import 'package:hungry/features/auth/widgets/custom_user_text_field.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/network/api_error.dart';
 import '../../../shared/custom_text.dart';
+import '../../../shared/snackBar_custom.dart';
 import '../../../splash_screen.dart';
 
 class ProfileView extends StatefulWidget {
@@ -18,12 +23,37 @@ class _ProfileViewState extends State<ProfileView> {
  final TextEditingController emailController = TextEditingController();
  final TextEditingController nameController = TextEditingController();
  final TextEditingController addressController = TextEditingController();
+    UserModel? userModel ;
+
+
+ AuthRepo authRepo = AuthRepo();
+Future<void>getProfileData()async {
+  try{
+    final user = await authRepo.getProfileData();
+    setState(() {
+      userModel =user ;
+    });
+
+  }catch(e){
+    String errorMsg = 'error in profile';
+    if (e is ApiError) {
+      errorMsg = e.message;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      customSnackBar(errorMsg),
+    );
+
+
+  }
+}
 
   @override
   void initState() {
-    nameController.text = 'Ahmed';
-    emailController.text = 'Ahmed@gmail.com';
-    addressController.text = 'Badr City';
+  getProfileData().then((v){
+    nameController.text = userModel?.name ??'user name';
+    emailController.text = userModel?.email??'email';
+    addressController.text = userModel?.address??'address';
+  });
     super.initState();
   }
   @override
@@ -51,44 +81,48 @@ class _ProfileViewState extends State<ProfileView> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Center(
-                child: Container(
-                  height: 120,
-                  width: 120,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/test/test.png'),
+          child: Skeletonizer(
+            enabled: userModel == null,
+            child: Column(
+              children: [
+                Center(
+                  child: Container(
+                    height: 120,
+                    width: 120,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white, width: 2),
+                      shape: BoxShape.circle,
+                      image:
+                          userModel?.image != null && userModel!.image!.isNotEmpty?
+                      DecorationImage(
+                        image: NetworkImage(userModel!.image!),
+                      ):null,
                     ),
-                    border: Border.all(width: 5, color: Colors.white),
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-              ),
-              Gap(20),
-              CustomUserTextField(controller: nameController, labelText: 'name'),
-              Gap(20),
-              CustomUserTextField(controller: emailController, labelText: 'email'),
-              Gap(20),
-              CustomUserTextField(controller: addressController, labelText: 'address'),
-              Gap(20),
-              Divider(color: Colors.white, thickness: 2),
-              Gap(20),
-              ListTile(
-                  contentPadding: EdgeInsets.symmetric(vertical: 2,horizontal: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  tileColor: Colors.white,
-                  leading: Image.asset('assets/icons/visablack.png',width: 50,),
-                  title: CustomText(text:' Debit Card',color: Colors.black,),
-                  subtitle:CustomText(text:' **** ***** 1974',color: Colors.black,) ,
-          
-                  trailing: CustomText(text: 'Default',color: Colors.black,)
-              ),
-            ],
+                Gap(20),
+                CustomUserTextField(controller: nameController, labelText: 'name'),
+                Gap(20),
+                CustomUserTextField(controller: emailController, labelText: 'email'),
+                Gap(20),
+                CustomUserTextField(controller: addressController, labelText: 'address'),
+                Gap(20),
+                Divider(color: Colors.white, thickness: 2),
+                Gap(20),
+                ListTile(
+                    contentPadding: EdgeInsets.symmetric(vertical: 2,horizontal: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    tileColor: Colors.white,
+                    leading: Image.asset('assets/icons/visablack.png',width: 50,),
+                    title: CustomText(text:' Debit Card',color: Colors.black,),
+                    subtitle:CustomText(text:userModel?.visa?.toString()??' **** ***** 1974',color: Colors.black,) ,
+            
+                    trailing: CustomText(text: 'Default',color: Colors.black,)
+                ),
+              ],
+            ),
           ),
         ),
       ),
