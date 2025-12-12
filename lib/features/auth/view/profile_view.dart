@@ -132,7 +132,7 @@ class _ProfileViewState extends State<ProfileView> {
                   textDirection: TextDirection.rtl,
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (c){
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (c){
                         return SplashView();
                       }));
                     },

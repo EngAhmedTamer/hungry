@@ -1,23 +1,67 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/features/auth/data/auth_repo.dart';
+import 'package:hungry/root.dart';
 import 'package:hungry/shared/custom_text.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/network/api_error.dart';
 import '../../../shared/custom_textfield.dart';
+import '../../../shared/snackBar_custom.dart';
 import '../widgets/custom_btn.dart';
 import 'login_view.dart';
 
-class SignupView extends StatelessWidget {
+class SignupView extends StatefulWidget {
   const SignupView({super.key});
 
   @override
+  State<SignupView> createState() => _SignupViewState();
+}
+
+class _SignupViewState extends State<SignupView> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passController = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  bool isLoading = false;
+  AuthRepo authRepo = AuthRepo();
+  Future<void>signup ()async {
+    if (formKey.currentState == null || !formKey.currentState!.validate()) {
+      return;
+    }
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final user = await authRepo.signup(
+        nameController.text.trim(),
+        emailController.text.trim(),
+        passController.text.trim(),
+      );
+      if (user != null) {
+        Navigator.pushReplacement(context,MaterialPageRoute(builder: (c)=>Root()));
+      }
+      setState(() {
+        isLoading = false;
+      });
+    }
+    catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      String errorMsg = 'error in register';
+      if (e is ApiError) {
+        errorMsg = e.message;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        customSnackBar(errorMsg),
+      );
+
+    }
+  }
+  @override
   Widget build(BuildContext context) {
-    TextEditingController nameController = TextEditingController();
-    TextEditingController emailController = TextEditingController();
-    TextEditingController passController = TextEditingController();
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
@@ -38,7 +82,7 @@ class SignupView extends StatelessWidget {
                   CustomText(text: 'Welcome to Our Food App'),
                   Gap(10),
                   Gap(60),
-            
+
                  Container(
                    width: double.infinity,
                    height: 1000,
@@ -49,11 +93,11 @@ class SignupView extends StatelessWidget {
                        topRight: Radius.circular(30),
                        topLeft: Radius.circular(30),
                      ),
-          
+
                    ),
                    child: Column(
                      children: [
-          
+
                        Gap(30),
                        CustomTextfield(
                          hint: 'Name ',
@@ -73,10 +117,8 @@ class SignupView extends StatelessWidget {
                          controller: passController,
                        ),
                        Gap(30),
-                       CustomAuthBtn(text: 'Sign Up',onTap: (){
-                         if (formKey.currentState!.validate())
-                           print('success register');
-                       },),
+                       isLoading ? CupertinoActivityIndicator(color: Colors.white,) :
+                       CustomAuthBtn(text: 'Sign Up',onTap: signup),
                        Gap(20),
                        CustomAuthBtn(
                          color: AppColors.primary,
@@ -89,7 +131,7 @@ class SignupView extends StatelessWidget {
                      ],
                    ),
                  )
-            
+
                 ],
               ),
             ),

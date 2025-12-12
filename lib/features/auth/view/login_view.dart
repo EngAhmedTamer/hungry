@@ -7,6 +7,7 @@ import 'package:hungry/features/auth/view/signup_view.dart';
 import 'package:hungry/root.dart';
 import 'package:hungry/shared/custom_text.dart';
 import 'package:hungry/shared/custom_textfield.dart';
+import 'package:hungry/shared/snackBar_custom.dart';
 
 import '../../../core/network/api_error.dart';
 import '../data/auth_repo.dart';
@@ -52,19 +53,9 @@ class _LoginViewState extends State<LoginView> {
         errorMsg = e.message;
       }
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red.shade900,
-          behavior: SnackBarBehavior.floating ,
-          clipBehavior: Clip.none,
-          content: Row(
-            children: [
-              Icon(CupertinoIcons.exclamationmark_circle,color: Colors.white,),
-              Gap(10),
-              CustomText(text: errorMsg,color: Colors.white,size: 14,weight:FontWeight.bold ,),
-            ],
-          )
-        ),
+        customSnackBar(errorMsg),
       );
+
     }
   }
 
@@ -133,7 +124,7 @@ class _LoginViewState extends State<LoginView> {
                             textColor: Colors.white,
                             text: 'Go To Signup ? ',
                             onTap: () {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (c) {
@@ -146,7 +137,7 @@ class _LoginViewState extends State<LoginView> {
                           Gap(20),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (c) {
