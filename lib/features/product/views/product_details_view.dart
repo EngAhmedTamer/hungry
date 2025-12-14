@@ -20,6 +20,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: GestureDetector(
@@ -134,7 +135,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                     ]
                 ),
                 SizedBox(
-                    width: 130,
+                    width: 150,
                     height: 60,
                     child: CustomButton(text: 'Add To Cart',)),
               ]

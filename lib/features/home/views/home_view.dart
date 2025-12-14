@@ -1,5 +1,6 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hungry/features/home/widgets/card_item.dart';
 import 'package:hungry/features/home/widgets/user_headers.dart';
 import '../../product/views/product_details_view.dart';
@@ -19,25 +20,50 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
+        backgroundColor: isDark ? colorScheme.background : colorScheme.background,
         body: CustomScrollView(
           slivers: [
             SliverAppBar(
               elevation: 0,
               pinned: true,
               scrolledUnderElevation: 0,
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.transparent,
               toolbarHeight: 160,
               automaticallyImplyLeading: false,
-              flexibleSpace: Padding(
-                padding: const EdgeInsets.only(top: 38, right: 20, left: 20),
-                child: Column(
-                  children: [
-                    UserHeaders(name: 'Ahmed ', image: 'assets/test/test.png'),
-                    SearchField(),
-                  ],
+              flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: isDark
+                        ? [
+                            colorScheme.surface.withOpacity(0.3),
+                            colorScheme.background,
+                          ]
+                        : [
+                            Colors.white.withOpacity(0.9),
+                            colorScheme.background,
+                          ],
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 21, right: 20, left: 20,bottom: 1),
+                  child: Column(
+                    children: [
+                      UserHeaders(
+                        name: 'Ahmed ',
+                        image: 'assets/test/test.png',
+                      ),
+                      const Gap(12),
+                      const SearchField(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -49,7 +75,7 @@ class _HomeViewState extends State<HomeView> {
                 ),
                 child: Column(
                   children: [
-                    Gap(25),
+                    const Gap(25),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: FoodCategory(
@@ -57,47 +83,36 @@ class _HomeViewState extends State<HomeView> {
                         category: category,
                       ),
                     ),
-                    Gap(25),
+                    const Gap(25),
                   ],
                 ),
               ),
             ),
             SliverPadding(
-              padding: EdgeInsets.symmetric(horizontal: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 15),
               sliver: SliverGrid(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (c) {
-                            return ProductDetailsView();
-                          },
-                        ),
-                      );
-                    },
-                    child: CardItem(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return CardItem(
                       image: 'assets/test/test.png',
                       text: 'Cheeseburger',
                       desc: 'Wendy"s burger',
                       rate: '4.5',
-                    ),
-
-                  );
-
-                }, childCount: 6),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    );
+                  },
+                  childCount: 6,
+                ),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
                   childAspectRatio: 0.73,
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: SizedBox(height: 100,)
-            )
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 100),
+            ),
           ],
         ),
       ),
