@@ -20,7 +20,7 @@ class CustomUserTextField extends StatelessWidget {
 
     return GlassmorphicContainer(
       borderRadius: BorderRadius.circular(16),
-      padding: EdgeInsets.zero,
+      padding: EdgeInsets.all(3),
       child: TextField(
         controller: controller,
         cursorHeight: 20,

@@ -6,110 +6,132 @@ import 'package:hungry/features/auth/data/user_model.dart';
 import '../../../core/network/api_exceptions.dart';
 import '../../../core/utils/pref_helper.dart';
 
-class AuthRepo{
-
+class AuthRepo {
   ApiService apiService = ApiService();
+
   /// login
-  Future<UserModel?>login(String email, String password)async{
+  Future<UserModel?> login(String email, String password) async {
     try {
-      final response = await apiService.post('/login',{'email' : email, 'password' : password});
-      if (response is ApiError){
+      final response = await apiService.post('/login', {
+        'email': email,
+        'password': password,
+      });
+      if (response is ApiError) {
         throw response;
       }
-      if (response is Map<String,dynamic>){
+      if (response is Map<String, dynamic>) {
         final msg = response['message'];
         final code = response['code'];
         final data = response['data'];
 
-        if (code != 200||data==null){
+        if (code != 200 || data == null) {
           throw ApiError(message: msg);
         }
         final user = UserModel.fromJson(response["data"]);
 
-        if (user.token!= null){
+        if (user.token != null) {
           await PrefHelper.saveToken(user.token!);
         }
         return user;
-
-      }else{
+      } else {
         throw ApiError(message: 'un known error');
       }
-
-
-    }on DioError catch (e){
+    } on DioError catch (e) {
       throw ApiExceptions.handelError(e);
-    }catch(e){
+    } catch (e) {
       throw ApiError(message: e.toString());
     }
-
-
   }
 
+  ///register
 
-
-
-///register
-
-  Future<UserModel?>signup(String name , String email, String password) async {
-
+  Future<UserModel?> signup(String name, String email, String password) async {
     try {
       final response = await apiService.post('/register', {
-      'name': name,
-      'email': email,
-      'password': password,
+        'name': name,
+        'email': email,
+        'password': password,
       });
-      if (response is ApiError){
+      if (response is ApiError) {
         throw response;
       }
-      if (response is Map<String,dynamic>){
+      if (response is Map<String, dynamic>) {
         final msg = response['message'];
         final code = response['code'];
         final coder = int.tryParse(code);
         final data = response['data'];
-        if (coder != 200 && coder != 201){
+        if (coder != 200 && coder != 201) {
           throw ApiError(message: msg);
         }
-    final user = UserModel.fromJson(response["data"]);
+        final user = UserModel.fromJson(response["data"]);
 
-    if (user.token!= null){
-    await PrefHelper.saveToken(user.token!);
-    }
-    return user;
-
-
-      }
-      else{
+        if (user.token != null) {
+          await PrefHelper.saveToken(user.token!);
+        }
+        return user;
+      } else {
         throw ApiError(message: 'un known error');
       }
-
-
-    }on DioError catch (e){
+    } on DioError catch (e) {
       throw ApiExceptions.handelError(e);
-    }catch(e){
+    } catch (e) {
       throw ApiError(message: e.toString());
     }
   }
 
+  /// get profile data
 
-/// get profile data
-
-  Future<UserModel?>getProfileData()async{
+  Future<UserModel?> getProfileData() async {
     try {
-    final response = await apiService.get('/profile');
-    return UserModel.fromJson(response['data']);
-
-    }
-    on DioError catch (e){
+      final response = await apiService.get('/profile');
+      return UserModel.fromJson(response['data']);
+    } on DioError catch (e) {
       throw ApiExceptions.handelError(e);
-    }
-    catch (e){
+    } catch (e) {
       throw ApiError(message: e.toString());
     }
   }
 
-///update profile data
+  ///update profile data
+  Future<UserModel?> updateProfileData({
+    required String name,
+    required String email,
+    required String address,
+    String? imagePath,
+    String? visa,
+  }) async {
+    try {
+      final formData = FormData.fromMap({
+        'name': name,
+        'email': email,
+        'address': address,
+        if (imagePath != null && imagePath.isNotEmpty)
+          'image': await MultipartFile.fromFile(
+            imagePath,
+            filename: 'profile.jpg',
+          ),
+        if (visa != null && visa.isNotEmpty) 'Visa': visa,
+      });
 
+      final response = await apiService.post('/update-profile', formData);
+      if (response is ApiError) {
+        throw response;
+      }
+      if (response is Map<String, dynamic>) {
+        final msg = response['message'];
+        final code = response['code'];
+        final coder = int.tryParse(code);
+        final data = response['data'];
+        if (coder != 200 && coder != 201) {
+          throw ApiError(message: msg);
+        }
+      }
+    } on DioError catch (e) {
+      throw ApiExceptions.handelError(e);
+    } catch (e) {
+      throw ApiError(message: e.toString());
+    }
+  }
 
-
-/// logout
+  /// logout
 }

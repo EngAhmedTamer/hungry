@@ -1,19 +1,20 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hungry/core/widgets/glassmorphic_container.dart';
 import 'package:hungry/features/auth/data/auth_repo.dart';
 import 'package:hungry/features/auth/data/user_model.dart';
 import 'package:hungry/features/auth/widgets/custom_user_text_field.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import '../../../core/constants/app_colors.dart';
 import '../../../core/network/api_error.dart';
 import '../../../root.dart';
 import '../../../shared/custom_button.dart';
 import '../../../shared/custom_text.dart';
 import '../../../shared/snackBar_custom.dart';
 import '../../../splash_screen.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -42,9 +43,49 @@ class _ProfileViewState extends State<ProfileView> {
       if (e is ApiError) {
         errorMsg = e.message;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        customSnackBar(errorMsg),
+      ScaffoldMessenger.of(context).showSnackBar(customSnackBar(errorMsg));
+    }
+  }
+
+  String? selectedImage;
+  bool isLoading = false;
+
+  Future<void> pickImage() async {
+    final pickedImage = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedImage != null) {
+      setState(() {
+        selectedImage = pickedImage.path;
+      });
+    }
+  }
+
+  Future<void> updateProfileData() async {
+    try {
+      isLoading = true;
+      setState(() {});
+
+      final user = await authRepo.updateProfileData(
+        name: nameController.text.trim(),
+        email: emailController.text.trim(),
+        address: addressController.text.trim(),
+        imagePath: selectedImage,
+        visa: visaController.text.trim(),
       );
+      isLoading = false;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(customSnackBar('Profile Updated Successfully'));
+      setState(() {
+        userModel = user;
+      });
+    } catch (e) {
+      String errorMsg = 'error in profile';
+      if (e is ApiError) {
+        errorMsg = e.message;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(customSnackBar(errorMsg));
     }
   }
 
@@ -70,12 +111,17 @@ class _ProfileViewState extends State<ProfileView> {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          backgroundColor: isDark ? colorScheme.background : colorScheme.background,
+          backgroundColor:
+              isDark ? colorScheme.background : colorScheme.background,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
             leading: GestureDetector(
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => Root())),
+              onTap:
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (c) => Root()),
+                  ),
               child: GlassmorphicContainer(
                 borderRadius: BorderRadius.circular(12),
                 padding: const EdgeInsets.all(8),
@@ -123,24 +169,36 @@ class _ProfileViewState extends State<ProfileView> {
                           width: 120,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            image: userModel?.image != null &&
-                                    userModel!.image!.isNotEmpty
-                                ? DecorationImage(
-                                    image: NetworkImage(userModel!.image!),
+                            image: DecorationImage(
+                              image: FileImage(File(selectedImage ?? "")),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          child:
+                              selectedImage != null
+                                  ? Image.file(
+                                    File(selectedImage!),
                                     fit: BoxFit.cover,
                                   )
-                                : null,
-                          ),
-                          child: userModel?.image == null ||
-                                  userModel!.image!.isEmpty
-                              ? Icon(
-                                  Icons.person,
-                                  size: 60,
-                                  color: colorScheme.primary,
-                                )
-                              : null,
+                                  : (userModel?.image != null &&
+                                      userModel!.image!.isNotEmpty)
+                                  ? Image.network(
+                                    userModel!.image!,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, err, builder) =>
+                                            Icon(Icons.person),
+                                  )
+                                  : Icon(Icons.person),
                         ),
                       ),
+                    ),
+                    const Gap(10),
+                    CustomButton(
+                      text: 'upload image',
+                      width: 175,
+                      height: 50,
+                      onTap: pickImage,
                     ),
                     const Gap(30),
                     CustomUserTextField(
@@ -163,69 +221,70 @@ class _ProfileViewState extends State<ProfileView> {
                       padding: const EdgeInsets.symmetric(vertical: 2),
                       borderRadius: BorderRadius.circular(16),
                       child: Divider(
-                        color: isDark
-                            ? Colors.white.withOpacity(0.1)
-                            : Colors.black.withOpacity(0.1),
+                        color:
+                            isDark
+                                ? Colors.white.withOpacity(0.1)
+                                : Colors.black.withOpacity(0.1),
                         thickness: 1,
                       ),
                     ),
                     const Gap(20),
                     userModel?.visa == null
                         ? CustomUserTextField(
-                            controller: visaController,
-                            labelText: 'VISA',
-                            textInputType: TextInputType.number,
-                          )
+                          controller: visaController,
+                          labelText: 'VISA',
+                        )
                         : GlassmorphicContainer(
-                            padding: const EdgeInsets.symmetric(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 2,
+                            horizontal: 16,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
                               vertical: 2,
                               horizontal: 16,
                             ),
-                            borderRadius: BorderRadius.circular(16),
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                vertical: 2,
-                                horizontal: 16,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            leading: Image.asset(
+                              'assets/icons/visablack.png',
+                              width: 50,
+                            ),
+                            title: CustomText(
+                              text: ' Debit Card',
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                            subtitle: CustomText(
+                              text:
+                                  userModel?.visa?.toString() ??
+                                  ' **** ***** 1974',
+                              color: isDark ? Colors.white70 : Colors.black54,
+                            ),
+                            trailing: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
                               ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              leading: Image.asset(
-                                'assets/icons/visablack.png',
-                                width: 50,
-                              ),
-                              title: CustomText(
-                                text: ' Debit Card',
-                                color: isDark ? Colors.white : Colors.black87,
-                              ),
-                              subtitle: CustomText(
-                                text: userModel?.visa?.toString() ??
-                                    ' **** ***** 1974',
-                                color: isDark ? Colors.white70 : Colors.black54,
-                              ),
-                              trailing: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    colorScheme.primary,
+                                    colorScheme.secondary,
+                                  ],
                                 ),
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      colorScheme.primary,
-                                      colorScheme.secondary,
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: CustomText(
-                                  text: 'Default',
-                                  color: Colors.white,
-                                  size: 12,
-                                  weight: FontWeight.w600,
-                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: CustomText(
+                                text: 'Default',
+                                color: Colors.white,
+                                size: 12,
+                                weight: FontWeight.w600,
                               ),
                             ),
                           ),
+                        ),
                     const Gap(100),
                   ],
                 ),
@@ -245,12 +304,14 @@ class _ProfileViewState extends State<ProfileView> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  isLoading ? const CircularProgressIndicator() :
+
                   Directionality(
                     textDirection: TextDirection.rtl,
                     child: CustomButton(
                       text: 'Edit Profile',
                       onTap: () {
-                        // Edit profile logic
+                        updateProfileData();
                       },
                     ),
                   ),
@@ -258,9 +319,7 @@ class _ProfileViewState extends State<ProfileView> {
                     textDirection: TextDirection.rtl,
                     child: CustomButton(
                       text: 'Log Out',
-                      color: isDark
-                          ? colorScheme.surface
-                          : Colors.white,
+                      color: isDark ? colorScheme.surface : Colors.white,
                       onTap: () {
                         Navigator.pushReplacement(
                           context,
